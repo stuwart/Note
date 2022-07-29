@@ -14,14 +14,16 @@
 
 状态转移方程：`dp[i][j]` 表示的是从状态 i 到状态 j 的路径数量。原状态 i 在楼 j 已经访问过的情况下去尝试将楼 k 加入已访问的点，如果可以，则新的状态会以k为终点，其路径数为原来的值加上`dp[ i ][ j ]`
 
- 判断x是否已经访问过： `i>>x&1` //相当于判断第x位是否为1
+判断x是否已经访问过： `i>>x&1` //相当于判断第x位是否为1
 
+答案即为   `dp[1<<21-1] `
 
+##### Code
 
 ```cpp
 #include <bits/stdc++.h>
 using namespace std;
-typedef long long ll;
+#define ll long long
 bool v[25][25]; 
 ll dp[1<<21][25];
 inline int gcd(int a, int b){
