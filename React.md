@@ -121,6 +121,8 @@ this.setState(
 
 #### State的更新会被合并
 
+每次只对需要修改的属性进行修改即可
+
 
 
 
@@ -181,6 +183,44 @@ this.setState(
 
 + 通过事件处理程序的参数获取事件对象e
 
+#### 绑定this
+
+若需要事件处理有函数，由于语法为  `o'clock = {this.xxx}`  ，没有调用函数，因此函数的默认this为全局。
+
+因此必须为函数绑定this，使得this绑定成功。
+
+##### bind
+
+`this.xxx = this.xxx.bind(this);`
+
+##### public class fields
+
+```react
+class Login extends React.Component {
+  xxx = () => {
+    console.log('this is:',this);
+  }
+}
+```
+
+##### 箭头函数
+
+```react
+class Login extends React.Component{
+  xxx(){
+    console.log('this is:',this);
+  }
+  
+  render(){
+    return (
+    <button onClick={() => this.handleClick()}>
+      Click me
+      </button>
+    )
+  }
+}
+```
+
 
 
 
@@ -196,11 +236,90 @@ function Form()
   }
   
   return {
-    //DOM元素
     <form onSubmit={handleSubmit}></form>
   }
 }
 ```
+
+
+
+#### 传递参数
+
+##### 箭头函数
+
+` onClick = {(e) => this.deleteRow(id,e)}` 
+
+##### bind
+
+`onClick = {this.deleteRow.bind(this,id)}`
+
+
+
+
+
+
+
+### 条件渲染
+
++ `if()` 语法
++ 表达式 && 代码
++ `condition? true: false`
+
+
+
+#### 列表&Key
+
+遍历数组： `数组名.map();`
+
+##### 加入Key
+
+```react
+const todoItems = todos.map((todo) =>
+  <li key={todo.id}>
+    {todo.text}
+  </li>
+);
+```
+
+一般绑定索引。
+
+⚠️**注意**：组件中不能获取到**Key** 的值，若要传递，需要另外设置属性传递值。
+
+
+
+
+
+#### 表单
+
+使用“受控组件”可达到对应的目的。
+
+##### 受控组件
+
+**state** 成为唯一数据源，并且渲染表单的组件控制着用户输入中表单发生的操作，该组件叫做 **<u>受控组件</u>** 。（可以接受并更改传入的参数）
+
+React中，表单的可变状态保存在state中，并且由setState()更新。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
