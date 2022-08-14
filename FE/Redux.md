@@ -364,17 +364,25 @@ const fetchUserById = userId => {
 
 使用`useSelector` 获取数据
 
-
-
-
+```react
+const count = useSelector(selectCount);
+//使用该hook来调用selector函数，这样组件就可以与store通信。
+```
 
 使用`useDispatch` 来执行更新
 
+```react
+const dispatch = useDispatch();
+
+//使用
+onClick = { () => dispatch(increment())}
+```
 
 
 
 
-#### 在<App>中配置
+
+#### 在App中配置
 
 ```react
 import { Provider } from 'react-redux'
