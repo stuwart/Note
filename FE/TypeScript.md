@@ -256,10 +256,6 @@ function sum() {
 
 
 
-
-
-
-
 ### 函数
 
 #### 声明
@@ -347,6 +343,41 @@ function reverse(x: number | string): number | string | void {
 
 
 
+### 类型
+
+#### 类型别名
+
+用于给类型起一个新名字。
+
+```tsx
+type Name = string;   //用type使得Name成为string的别名
+type NameResolver = () => string;
+type NameOrResolver = Name | NameResolver;
+function getName(n: NameOrResolver): Name { //这里Name指的就是string
+    if (typeof n === 'string') {
+        return n;
+    } else {
+        return n();
+    }
+}
+```
+
+
+
+#### 字符串字面量类型
+
+​		用来约束取值只能是某几个字符串中的一个。
+
+```tsx
+type EventNames = 'click' | 'scroll' | 'mousemove';
+function handleEvent(ele: Element, event: EventNames) {
+    // do something
+}
+
+handleEvent(document.getElementById('hello'), 'scroll');  // 没问题
+handleEvent(document.getElementById('world'), 'dblclick'); // 报错，event 不能为 'dblclick'
+```
+
 
 
 #### 类型断言
@@ -390,11 +421,194 @@ class HttpError extends Error {
 }
 
 function isApiError(error: Error) {
-    if (error instanceof ApiError) { 
+  //将error类型断言为ApiError,否则Error类型没有code属性，会报错。
+   if (typeof (error as ApiError).code === 'number'){	
+    //if (error instanceof ApiError) { 
       //该处可以使用typeof，但是用instanceof更加合适，因为可以直接判断实例
+      //但是如果ApiError为接口，那么不能使用instanceof
         return true;
     }
     return false;
 }
 ```
+
+
+
+3.将一个本来没有的属性添加到目标对象上
+
+​		本来可能会报错，但是可以将对象类型**断言为Any**，这样就不会报错，因为Any属性可以访问任何属性。
+
+​		⚠️除非非常确定该行为是正确的，否则不建议这么做。
+
+```tsx
+(window as any).foo = 1;//将window对象添加foo属性
+```
+
+##### 总结
+
+​	只有`A` 与 `B` 存在兼容关系，两者才可互相断言。
+
+
+
+### 常用对象
+
+见[文档](https://ts.xcatliu.com/basics/built-in-objects.html) 
+
+#### ES内置对象
+
++ Boolean
++ Error
++ Date
++ RegExp
+
+#### DOM、BOM
+
++ Document
++ HTMLElement
++ Event
++ NodeList
+
+
+
+## TS进阶
+
+### 元组（Tuple）
+
+#### 概念
+
+​		数组内（不是Any类型）只能放相同类型的元素，但是元组可以放不同类型的元素。
+
+#### 示例
+
+```tsx
+//定义一对值为string和number的元组
+let tom:[string,number] = ['Tom', 25];
+
+```
+
+#### 越界元素
+
+添加**越界元素**时，类型会被限制为元组中每个类型的联合类型。
+
+```tsx
+let tom: [string, number];
+tom = ['Tom', 25];
+tom.push('male');
+tom.push(true); //true会被限制为string｜number类型
+```
+
+
+
+### 泛型
+
+#### 概念
+
+​		在定义函数、接口、类时，不预先定义类型，在使用的时候再指定类型。
+
+#### 语法
+
+```tsx
+function createArray<T>(length: number, value: T): Array<T> {  //使用泛型，可以确保value与result类型相同，但又不用事先定好他们的类型，因为value的类型可能不确定。
+    let result: T[] = [];
+    for (let i = 0; i < length; i++) {
+        result[i] = value;
+    }
+    return result;
+}
+
+createArray<string>(3, 'x');
+```
+
+
+
+同样的，也可以为泛型定义多个类型参数，例如：
+
+```typescript
+function swap<T, U>(tuple: [T, U]): [U, T] {
+    return [tuple[1], tuple[0]];
+}
+
+swap([7, 'seven']); // ['seven', 7]
+
+```
+
+#### 约束
+
+​	如果参数是泛型，那么在函数内部不能随意操作它的属性/方法，因为你不知道它是什么类型，自然的，也就无法确定它有什么属性。
+
+​	为了这个缺点，可以使用**泛型约束** ：
+
+```typescript
+interface Lengthwise {
+    length: number;
+}
+
+function loggingIdentity<T extends Lengthwise>(arg: T): T {
+    console.log(arg.length);
+    return arg;
+}
+```
+
+多个参数类型**互相约束**：
+
+```typescript
+function copyFields<T extends U, U>(target: T, source: U): T {
+    for (let id in source) {
+        target[id] = (<T>source)[id];
+    }
+    return target;
+}
+
+let x = { a: 1, b: 2, c: 3, d: 4 };
+
+copyFields(x, { b: 10, d: 20 });
+```
+
+#### 泛型接口
+
+```typescript
+interface CreateArrayFunc<T> {
+    (length: number, value: T): Array<T>;
+}
+
+let createArray: CreateArrayFunc<any>;
+createArray = function<T>(length: number, value: T): Array<T> {
+    let result: T[] = [];
+    for (let i = 0; i < length; i++) {
+        result[i] = value;
+    }
+    return result;
+}
+
+createArray(3, 'x'); // ['x', 'x', 'x']
+```
+
+
+
+#### 泛型类
+
+与**泛型接口**相似：
+
+```typescript
+class GenericNumber<T> {
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+}
+
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function(x, y) { return x + y; };
+```
+
+
+
+### 声明合并
+
+若出现了两个相同名字的函数、接口或者类，那么它们会合并成一个类型。
+
+
+
+
+
+
 
