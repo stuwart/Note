@@ -1,6 +1,10 @@
 ## React
 
+### 何为React？
 
+`React` 本质与`Vue` 一样，是一个`JavaSctipt` 库，它用于构建前端用户界面，在大型项目中为开发者提供了很好的支持。
+
+**React** 起源于**FaceBook**。
 
 ### 渲染
 
@@ -30,6 +34,8 @@ ReactDOM.render(
 
 
 ### 组件
+
+React的组件分为类组件和函数组件。类组件中状态更新使用`state`，函数组件中使用`useState` Hook。
 
 #### 类组件
 
