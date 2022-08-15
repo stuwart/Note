@@ -365,21 +365,75 @@ strategies.myOption = strategies.methods
 
 ### 自定义指令
 
+#### 语法
+
+**注册全局指令**
+
+```js
+Vue.directive('focus',{
+  inserted:function(el){
+    el.focus();
+  }
+})
+```
+
+**注册局部指令**
+
+```js
+directives:{
+  focus:{
+    inserted:function(el){
+      el.focus();
+    }
+  }
+}
+```
+
+
+
+注册之后便可以使用 `v-focus` 指令。
+
+#### 钩子函数
+
+自定义指令定义对象中提供以下几种钩子函数
+
+
+
++ `bind`：只调用一次，第一次绑定到指令时调用。
++ `inserted` ：被绑定元素插入父节点时调用
++ `update` ：所在组件的`VNode`更新时调用（有可能是更新前，也有可能是更新后）
+
++ `componentUpdated`：指令所在组件的`VNode` 及其子VNode全部更新后调用
++ `unbind` ：只调用一次，指令与元素解绑时调用
+
+
+
+##### 参数
+
++ el：指令所绑定的元素，用于直接操作DOM
++ **binding**：一个对象，包含：
+  + `name`
+  + `value`
+  + `oldValue`
+  + `expression`
+  + `arg`
+  + `modifiers`
++ `VNode`
++ `oldVnode`
+
+
+
+##### 动态参数
+
+例如`v-mydirective:[argument]="value"`的`augument` 参数时动态的。
 
 
 
 
 
+### 渲染函数与JSX
 
-
-
-
-
-
-
-
-
-
+暂未写。
 
 
 
