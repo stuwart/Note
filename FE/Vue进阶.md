@@ -433,13 +433,102 @@ directives:{
 
 ### 渲染函数与JSX
 
-暂未写。
+`Vue`官方推荐的创建HTML的方式是使用模版（`template`)，但也同时支持渲染函数（`render` ）与JSX语法。
+
+```jsx
+Vue.component('anchored-heading', {
+  render: function (createElement) {
+    return createElement(
+      'h' + this.level,   // 标签名称
+      this.$slots.default // 子节点数组 
+      //当向组件中传递不带v-slot的子节点时，这些子节点被存储在实例中的 $slots.default中
+    )
+  },
+  props: {
+    level: {
+      type: Number,
+      required: true
+    }
+  }
+})
+```
+
+
+
+#### 虚拟DOM
+
+`Vue`会建立一个**虚拟DOM**来对真实DOM进行更新。
+
+```js
+return createElement('h1',this.blogTitle)
+```
+
+`createElement` 实际上是创建了一个关于节点的信息，把这些信息告诉`Vue`，这些节点称为**虚拟节点**，也就是**VNode** 。
+
+⚠️**VNode**必须是唯一的，下面这种情况是错误的
+
+```js
+render: function (createElement) {
+  var myParagraphVNode = createElement('p', 'hi')
+  return createElement('div', [
+    // 错误 - 重复的 VNode
+    myParagraphVNode, myParagraphVNode
+  ])
+}
+```
+
+
+
+#### createElement
+
+对`createElement` 作如下解释。
+
+```js
+createElement(
+  // {String | Object | Function}
+  // 一个 HTML 标签名、组件选项对象，或者
+  // resolve 了上述任何一种的一个 async 函数。必填项。
+  'div',
+
+  // {Object}
+  // 一个与模板中 attribute 对应的数据对象。可选。
+  {
+    // (详情见下一节)
+  },
+
+  // {String | Array}
+  // 子级虚拟节点 (VNodes)，由 `createElement()` 构建而成，
+  // 也可以使用字符串来生成“文本虚拟节点”。可选。
+  [
+    '先写一些文字',
+    createElement('h1', '一则头条'),
+    createElement(MyComponent, {
+      props: {
+        someProp: 'foobar'
+      }
+    })
+  ]
+)
+```
 
 
 
 
 
+#### `slots` 与`children`
 
+你可能想知道为什么同时需要 `slots()` 和 `children`。`slots().default` 不是和 `children` 类似的吗？在一些场景中，是这样——但如果是如下的带有子节点的函数式组件呢？
+
+```
+<my-functional-component>
+  <p v-slot:foo>
+    first
+  </p>
+  <p>second</p>
+</my-functional-component>
+```
+
+对于这个组件，`children` 会给你两个段落标签，而 `slots().default` 只会传递第二个匿名段落标签，`slots().foo` 会传递第一个具名段落标签。同时拥有 `children` 和 `slots()`，因此你可以选择让组件感知某个插槽机制，还是简单地通过传递 `children`，移交给其它组件去处理。
 
 
 

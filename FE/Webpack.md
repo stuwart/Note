@@ -94,8 +94,6 @@ module.exports = {
 
 ##### 配置
 
-+ config.js
-
 ```javascript
 // webpack.config.js
 
