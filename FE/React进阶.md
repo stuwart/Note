@@ -27,7 +27,21 @@ import("./math").then(math => {
 });
 ```
 
+使用这种方式**动态引入** ，可以使`Webpack`解析该语法并自动分割。
 
+
+
+#### React.lazy
+
+该函数可以像渲染常规组件一样处理动态导入，它接受一个函数，需要动态调用`import`，并返回一个`Promise` ，这个`Promise` 需要Resolve 一个`default export` 的组件。 
+
+```jsx
+//使用之前
+import OtherComponent from './OtherComponent';
+
+//使用之后
+const OtherComponent = React.lazy(() => import('./OtherComponent'));
+```
 
 
 
