@@ -2,6 +2,8 @@
 
 ### 何为Promise
 
+**Promise**是ES6的新特性。
+
 ​	传统的使用回调函数的方式：
 
 ```javascript
@@ -122,14 +124,55 @@ getURL(URL).then(function onFulfilled(value){
 
 #### 创建Promise对象
 
-1. `new Promise()`
-2. 
+1. `new Promise()` 创建一个**promise** 对象
+2. 在`fn` 中指定异步处理
+   1. 处理结果正常则调用`resolve(处理结果值)`
+   2. 处理结果失败则调用`reject(Error对象)`
 
 
 
+接下来，我们来通过异步处理的方式获取XHR的数据。
+
+#### 创建XHR的Promise对象
+
+```js
+function getURL(URL) {
+    return new Promise(function (resolve, reject) {
+        var req = new XMLHttpRequest();
+        req.open('GET', URL, true);
+        req.onload = function () {
+            if (req.status === 200) {
+                resolve(req.responseText); 
+            } else {
+                reject(new Error(req.statusText));
+            }
+        };
+        req.onerror = function () {
+            reject(new Error(req.statusText));
+        };
+        req.send();
+    });
+}
+// 运行示例
+var URL = "http://httpbin.org/get";
+getURL(URL).then(function onFulfilled(value){
+    console.log(value);
+}).catch(function onRejected(error){
+    console.error(error);
+});
+```
 
 
 
+#### 创建处理方法
+
+刚才创建的返回`Promise` 的函数：
+
+`getURL("http://example.com/");`
+
+该函数在执行`resolve(req.responseText)`时，将**peomise**变为`resolve(Fulfilled)`状态，同时调用`onFulfilled`函数。
+
+同样的，发生错误的话，**promise**变为`Rejected`状态，同时调用`.then`后的第二个参数或者是在`.catch` 方法中设置想要调用的函数。
 
 
 
