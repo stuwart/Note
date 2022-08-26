@@ -575,7 +575,9 @@ modules: {
 }
 ```
 
-### 在带命名空间的模块注册全局 action
+##### 在带命名空间的模块注册全局 
+
+##### action
 
 若需要在带命名空间的模块注册全局 action，你可添加 `root: true`，并将这个 action 的定义放在函数 `handler` 中。例如：
 
@@ -589,7 +591,6 @@ modules: {
   modules: {
     foo: {
       namespaced: true,
-
       actions: {
         someAction: {
           root: true,
@@ -601,7 +602,7 @@ modules: {
 }
 ```
 
-### [#](https://v3.vuex.vuejs.org/zh/guide/modules.html#带命名空间的绑定函数)带命名空间的绑定函数
+##### 带命名空间的绑定函数
 
 当使用 `mapState`, `mapGetters`, `mapActions` 和 `mapMutations` 这些函数来绑定带命名空间的模块时，写起来可能比较繁琐：
 
